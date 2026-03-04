@@ -63,9 +63,14 @@ class _AddExerciseStepperState extends State<AddExerciseStepper> {
       children: [
         const SizedBox(height: 10),
         if (_currentStep == lastStepIndex) errorWidget,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
+        LayoutBuilder(
+  builder: (context, constraints) {
+    final isSmall = constraints.maxWidth < 500;
+
+    return isSmall
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             OutlinedButton(
               onPressed: details.onStepCancel,
               child: Text(AppLocalizations.of(context).previous),
@@ -143,7 +148,9 @@ class _AddExerciseStepperState extends State<AddExerciseStepper> {
                 child: Text(AppLocalizations.of(context).next),
               ),
           ],
-        ),
+        );
+  }
+          )
       ],
     );
   }
