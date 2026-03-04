@@ -148,9 +148,90 @@ class _AddExerciseStepperState extends State<AddExerciseStepper> {
                 child: Text(AppLocalizations.of(context).next),
               ),
           ],
+        ):
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+            OutlinedButton(
+              onPressed: details.onStepCancel,
+              child: Text(AppLocalizations.of(context).previous),
+            ),
+
+            // Submit button on last step
+            if (_currentStep == lastStepIndex)
+              ElevatedButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        setState(() {
+                          _isLoading = true;
+                          errorWidget = const SizedBox.shrink();
+                        });
+                        final addExerciseProvider = context.read<AddExerciseProvider>();
+                        final exerciseProvider = context.read<ExercisesProvider>();
+
+                        Exercise? exercise;
+                        try {
+                          final exerciseId = await addExerciseProvider.postExerciseToServer();
+                          exercise = await exerciseProvider.fetchAndSetExercise(exerciseId);
+                        } on WgerHttpException catch (error) {
+                          if (context.mounted) {
+                            setState(() {
+                              errorWidget = FormHttpErrorsWidget(error);
+                            });
+                          }
+                        } finally {
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        }
+
+                        if (exercise == null || !context.mounted) {
+                          return;
+                        }
+
+                        final name = exercise
+                            .getTranslation(Localizations.localeOf(context).languageCode)
+                            .name;
+
+                        return showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(AppLocalizations.of(context).success),
+                              content: Text(AppLocalizations.of(context).cacheWarning),
+                              actions: [
+                                TextButton(
+                                  child: Text(name),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      ExerciseDetailScreen.routeName,
+                                      arguments: exercise,
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                child: _isLoading
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator())
+                    : Text(AppLocalizations.of(context).save),
+              )
+            else
+              ElevatedButton(
+                onPressed: details.onStepContinue,
+                child: Text(AppLocalizations.of(context).next),
+              ),
+          ],
         );
-  }
-          )
+        }
+        )
       ],
     );
   }
