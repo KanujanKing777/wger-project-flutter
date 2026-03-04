@@ -44,57 +44,84 @@ class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
 
   @override
-  Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.sizeOf(context);
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            child: Container(
-              height: 0.55 * deviceSize.height,
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    body: LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+
+        // Breakpoints
+        final isMobile = width < 600;
+        final isTablet = width >= 600 && width < 1100;
+        final isDesktop = width >= 1100;
+
+        double contentWidth;
+        if (isDesktop) {
+          contentWidth = 500;
+        } else if (isTablet) {
+          contentWidth = 450;
+        } else {
+          contentWidth = width * 0.9;
+        }
+
+        return Stack(
+          children: [
+            // Top background
+            Container(
+              height: isMobile ? 300 : 350,
+              width: double.infinity,
               color: wgerPrimaryColor,
             ),
-          ),
-          SingleChildScrollView(
-            child: SizedBox(
-              height: deviceSize.height,
-              width: deviceSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 0.15 * deviceSize.height),
-                  const Image(
-                    image: AssetImage('assets/images/logo-white.png'),
-                    width: 85,
+
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: contentWidth),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      _HeaderSection(),
+                      SizedBox(height: 30),
+                      AuthCard(),
+                    ],
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20.0),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 94.0,
-                    ),
-                    child: const Text(
-                      'wger',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 0.025 * deviceSize.height),
-                  const Flexible(child: AuthCard()),
-                ],
+                ),
               ),
             ),
+          ],
+        );
+      },
+    ),
+  );
+}
+}
+
+class _HeaderSection extends StatelessWidget {
+  const _HeaderSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = width > 900;
+
+    return Column(
+      children: [
+        const Image(
+          image: AssetImage('assets/images/logo-white.png'),
+          width: 90,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'wger',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: isDesktop ? 34 : 28,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -250,7 +277,7 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        width: deviceSize.width * 0.9,
+        width: double.infinity,
         padding: EdgeInsets.symmetric(
           horizontal: 15.0,
           vertical: 0.025 * deviceSize.height,
