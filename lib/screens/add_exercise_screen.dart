@@ -315,39 +315,42 @@ class EmailNotVerified extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(25),
         child: Center(
-          child: Card(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.warning),
-                  title: Text(AppLocalizations.of(context).unVerifiedEmail),
-                  subtitle: Text(
-                    AppLocalizations.of(
-                      context,
-                    ).contributeExerciseWarning(MIN_ACCOUNT_AGE.toString()),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          FormScreen.routeName,
-                          arguments: FormScreenArguments(
-                            AppLocalizations.of(context).userProfile,
-                            UserProfileForm(user!),
-                          ),
-                        );
-                      },
-                      child: Text(AppLocalizations.of(context).userProfile),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.warning),
+                    title: Text(AppLocalizations.of(context).unVerifiedEmail),
+                    subtitle: Text(
+                      AppLocalizations.of(
+                        context,
+                      ).contributeExerciseWarning(MIN_ACCOUNT_AGE.toString()),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            FormScreen.routeName,
+                            arguments: FormScreenArguments(
+                              AppLocalizations.of(context).userProfile,
+                              UserProfileForm(user!),
+                            ),
+                          );
+                        },
+                        child: Text(AppLocalizations.of(context).userProfile),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
