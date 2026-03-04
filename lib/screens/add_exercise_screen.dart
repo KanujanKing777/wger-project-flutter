@@ -152,8 +152,13 @@ class _AddExerciseStepperState extends State<AddExerciseStepper> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: EmptyAppBar(AppLocalizations.of(context).contributeExercise),
-      body: WidescreenWrapper(
+      body: LayoutBuilder(
+  builder: (context, constraints) {
+    final isWide = constraints.maxWidth > 800;
+
+    return WidescreenWrapper(
         child: Stepper(
+          type:isWide ? StepperType.horizontal : StepperType.vertical,
           controlsBuilder: _controlsBuilder,
           steps: [
             Step(
@@ -203,7 +208,9 @@ class _AddExerciseStepperState extends State<AddExerciseStepper> {
           },
            */
         ),
-      ),
+      );
+  }
+        ),
     );
   }
 }
